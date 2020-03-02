@@ -1,8 +1,7 @@
 """
 This module contains a wrapper class for MicroPython's :py:class:`~machine.UART` or
 CircuitPython's :py:class:`~busio.UART` class with context manager compatibility to
-work as a drop-in replacement to
-:py:class:`~serial.Serial` object.
+work as a drop-in replacement to :py:class:`~serial.Serial` object.
 
 .. note:: This helper class does not expose all the pySerial API. It's tailored to this library only.
 """
@@ -13,6 +12,10 @@ try:
 except ImportError: # running on a MicroPython board
     from machine import UART
     MICROPY = True
+
+class Parity:
+    ODD = 1
+    EVEN = 0
 
 class SerialUART(UART):
     """A wrapper class for MicroPython's machine.UART class to utilize python's context
@@ -35,12 +38,10 @@ class SerialUART(UART):
     def __init__(self, tx_pin=None, rx_pin=None, baudrate=9600, bits=8, parity=None, stop=1):
         if MICROPY:
             super(SerialUART, self).__init__(
-                tx=tx_pin, rx=rx_pin, baudrate=baudrate, bits=bits, parity=parity, stop=stop
-            )
+                tx=tx_pin, rx=rx_pin, baudrate=baudrate, bits=bits, parity=parity, stop=stop)
         else:
             super(SerialUART, self).__init__(
-                tx_pin, rx_pin, baudrate=baudrate, bits=bits, parity=parity, stop=stop
-            )
+                tx_pin, rx_pin, baudrate=baudrate, bits=bits, parity=parity, stop=stop)
 
     def __enter__(self):
         """Used to reinitialize serial port with the correct configuration ("enter"

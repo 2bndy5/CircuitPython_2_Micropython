@@ -1,5 +1,5 @@
 """PWMOut class as an alternative to circuitpython's pulseio.PWMOut due to lack of support on the
-Raspberry Pi and the Jetson and various MicroPython compatible boards"""
+Raspberry Pi and the Jetson and MicroPython ports to esp8266/esp32 boards"""
 # pylint: disable=import-error
 MICROPY = False
 try:
@@ -8,28 +8,8 @@ try:
     # GPIO.setwarnings(False) # unadvised due to thread priority
 except ImportError:
     import machine
+    from sys import platform
     MICROPY = True
-
-# example code for Raspberry Pi & nVidia Jetson
-# GPIO.setup(12, GPIO.OUT)
-# p = GPIO.PWM(12, 50)  # channel=12 frequency=50Hz
-# p.start(0) # init duty_cycle of 0 (max of 100)
-# p.ChangeFrequency(500)
-# for dc in range(0, 101): # fade LED from 0 to 100% duty cycle
-#     p.ChangeDutyCycle(dc)
-#     time.sleep(0.1)
-# p.stop()
-# GPIO.cleanup(12) # this should be done on entry & exit of programs
-
-# example code for micropython boards ()
-# from machine import Pin, PWM
-# pwm0 = PWM(Pin(0))      # create PWM object from a pin
-# pwm0.freq()             # get current frequency
-# pwm0.freq(1000)         # set frequency
-# pwm0.duty()             # get current duty cycle
-# pwm0.duty(200)          # set duty cycle
-# pwm0.deinit()           # turn off PWM on the pin
-# pwm2 = PWM(Pin(2), freq=500, duty=512) # create and configure in one go
 
 class PWMOut:
     """A wrapper class to substitute the RPi.GPIO.PWM or `machine.Pin` for `pulseio.PWMOut`
@@ -43,8 +23,10 @@ class PWMOut:
     def __init__(self, pin, freq=500, duty_cycle=0):
         self._pin_number = int(repr(pin))
         if MICROPY:
-            if freq < 1 or freq > 1000:
+            if platform.startswith('esp82') and freq < 1 or freq > 1000:
                 raise ValueError('esp8266 only allows a frequency that ranges 1Hz to 1kHz')
+            if platform.startswith('esp32') and freq < 1 or freq > 40000000:
+                raise ValueError('esp32 only allows a frequency that ranges 1Hz to 40MHz')
             self._pin = machine.PWM(
                 machine.Pin(self._pin_number),
                 freq=freq,
