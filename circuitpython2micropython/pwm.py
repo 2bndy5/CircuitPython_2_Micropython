@@ -1,5 +1,6 @@
-"""PWMOut class as an alternative to circuitpython's pulseio.PWMOut due to lack of support on the
-Raspberry Pi and the Jetson and MicroPython ports to esp8266/esp32 boards"""
+"""PWMOut class as an alternative to circuitpython's pulseio.PWMOut due to
+lack of support on the Raspberry Pi & nVidia Jetson. This can also serve as
+a wrapper for MicroPython's machine.PWM on esp8266/esp32 boards"""
 # pylint: disable=import-error
 MICROPY = False
 try:
