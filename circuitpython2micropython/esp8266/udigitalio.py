@@ -26,9 +26,15 @@ class DigitalInOut:
         # deinit() not implemented in micropython
         pass # avoid raiseing a NotImplemented Error
 
-    def switch_to_output(self, value=False):
+    def switch_to_output(self, pull=None, value=False):
         """ change pin into output """
-        self._pin.init(Pin.OUT, value=value)
+        if pull is None:
+            self._pin.init(Pin.OUT, value=value)
+        elif pull == Pull.UP:
+            self._pin.init(Pin.OUT, pull=pull, value=value)
+        else:
+            raise AttributeError("pull parameter is unrecognized & not "
+                                 "defined in class 'udigitalio.Pull'")
 
     def switch_to_input(self, pull=None):
         """ change pin into input """

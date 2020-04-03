@@ -30,6 +30,7 @@ A wrapper module to implement a context manager for SPI Bus Devices using MicroP
 `machine.SPI` class. This code has been customized for this circuitpython_nrfl01 library,
 thus there is no consideration for other SPI devices (like SD cards).
 """
+# pylint: disable=import-error
 from machine import Pin, I2C
 
 class SPIDevice:
@@ -49,7 +50,11 @@ class SPIDevice:
         self.phase = phase
         self.chip_select = chip_select
         if self.chip_select:
-            self.chip_select.init(mode=Pin.OUT, value=True)
+            self.chip_select.switch_to_output(value=True)
+
+    @property
+    def frequency(self):
+        return self.baudrate
 
     def __enter__(self):
         self.spi.init(
@@ -163,10 +168,10 @@ class I2CDevice:
         # in micropython we need the `Pin` objects used for sda & scl parameters to I2C.init()
         if self.scl is not None and self.sda is not None:
             if self.freq is not None:
-                self.i2c = machine.I2C(scl=self.scl, sda=self.sda, frequency=self.freq)
+                self.i2c = I2C(scl=self.scl, sda=self.sda, frequency=self.freq)
             else:
-                self.i2c = machine.I2C(scl=self.scl, sda=self.sda)
+                self.i2c = I2C(scl=self.scl, sda=self.sda)
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, *exc):
         return False

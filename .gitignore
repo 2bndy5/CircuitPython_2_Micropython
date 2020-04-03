@@ -130,3 +130,6 @@ dmypy.json
 
 # VS Code folder
 .vscode
+
+# for testing with mu IDE
+main.py
