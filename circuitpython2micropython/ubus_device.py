@@ -27,7 +27,7 @@ SPIDevice
 ===========
 
 A wrapper module to implement a context manager for SPI Bus Devices using MicroPython's
-`machine.SPI` class. This code has been customized for this circuitpython_nrfl01 library,
+`machine.SPI` class. This code has been customized for the CircuitPython-nRF24L01 library,
 thus there is no consideration for other SPI devices (like SD cards).
 """
 # pylint: disable=import-error
